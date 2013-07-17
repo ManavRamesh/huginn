@@ -9,31 +9,7 @@ module Agents
     description <<-MD
       The WebsiteAgent scrapes a website, XML document, or JSON feed and creates Events based on the results.
 
-      Specify a `url` and select a `mode` for when to create Events based on the scraped data, either `all` or `on_change`.
-
-      The `type` value can be `xml`, `html`, or `json`.
-
-      To tell the Agent how to parse the content, specify `extract` as a hash with keys naming the extractions and values of hashes.
-
-      When parsing HTML or XML, these sub-hashes specify how to extract with a `:css` CSS selector and either `:text => true` or `attr` pointing to an attribute name to grab.  An example:
-
-          :extract => {
-            :url => { :css => "#comic img", :attr => "src" },
-            :title => { :css => "#comic img", :attr => "title" },
-            :body_text => { :css => "div.main", :text => true }
-          }
-
-      When parsing JSON, these sub-hashes specify [JSONPaths](http://goessner.net/articles/JsonPath/) to the values that you care about.  For example:
-
-          :extract => {
-            :title => { :path => "results.data[*].title" },
-            :description => { :path => "results.data[*].description" }
-          }
-
-      Note that for all of the formats, whatever you extract MUST have the same number of matches for each extractor.  E.g., if you're extracting rows, all extractors must match all rows.  For generating CSS selectors, something like [SelectorGadget](http://selectorgadget.com) may be helpful.
-
-      Set `expected_update_period_in_days` to the maximum amount of time that you'd expect to pass between Events being created by this Agent.
-    MD
+       MD
 
     event_description do
       <<-MD
@@ -71,8 +47,8 @@ module Agents
     def check
       hydra = Typhoeus::Hydra.new
       request = Typhoeus::Request.new(options[:url], :followlocation => true)
-      request.on_complete do |response|
-        doc = parse(response.body)
+      request.on_complete do |response|7
+        doc = parse(response.body)	
         output = {}
         options[:extract].each do |name, extraction_details|
           if extraction_type == "json"
